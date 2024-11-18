@@ -10,7 +10,7 @@ authors = [
     {name = "Mikołaj Pokora", email = "pokora.mikolaj+github@gmail.com"}
 ]
 description = "Iris `.properties` compiler for extended functionality and automation"
-readme = "README.md"
+#readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">= 3.12"
 keywords = ["iris", "optifine", "mc", "minecraft", "shader", "shaders", "properties", "compiler"]
@@ -23,5 +23,8 @@ Repository = "https://github.com/MikiP98/iProperties"
 Issues = "https://github.com/MikiP98/iProperties/issues"
 
 [project.scripts]
-iProperties = "src:main_cli"
-iris = "src:main_cli"
+iProperties = "iProperties.main:main_cli"
+iris = "iProperties.main:main_cli"
+
+#[tool.hatch.build.targets.wheel]
+#packages = ["src/iProperties", "src/iProperties/compiler"]
