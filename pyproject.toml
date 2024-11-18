@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+#dynamic = ["version"]
+version = "0.0.1"
+name = "iProperties"
+authors = [
+    {name = "Mikołaj Pokora", email = "pokora.mikolaj+github@gmail.com"}
+]
+description = "Iris `.properties` compiler for extended functionality and automation"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">= 3.12"
+keywords = ["iris", "optifine", "mc", "minecraft", "shader", "shaders", "properties", "compiler"]
+classifiers = [
+    "Intended Audience :: Developers",
+]
+
+[project.urls]
+Repository = "https://github.com/MikiP98/iProperties"
+Issues = "https://github.com/MikiP98/iProperties/issues"
+
+[project.scripts]
+iProperties = "src:main_cli"
+iris = "src:main_cli"
