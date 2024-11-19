@@ -1,6 +1,9 @@
 ### My ignore list
 
 .idea/discord.xml
+block.properties.template
+block.properties
+blocks.glsl
 
 
 ### PyCharm template

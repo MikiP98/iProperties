@@ -1,5 +1,5 @@
 # coding=utf-8
-import iProperties.compiler as compiler
+import iProperties.preprocessor as preprocessor
 
 __version__ = '0.0.1'
 
@@ -14,7 +14,7 @@ def main(flags_required=True):
 
     # If flags are missing and `flags_required` is True, ask for input
 
-    compiler.compile_properties()
+    preprocessor.compile_properties()
 
 
 if __name__ == '__main__':
