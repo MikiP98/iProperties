@@ -174,39 +174,24 @@ class Preprocessor:
         for value in values:
             processed_values.extend(flatten(self.pre_process_value(value, debug)))
 
-        # for i, value in enumerate(processed_values):
-        #     if type(value) == list:
-        #         print(f"vvv {value=}")
-        #         processed_values[i] = ''.join(value)
-
         return processed_values
 
     def pre_process_value(self, value: str, debug=False) -> list:
         if '[' in value:
             parts = value.split('[', 1)
 
-            print(f"{value=}")
-            print(f"{parts=}")
-
             start = parts[0]
             rest = parts[1]
 
             rest_parts = rest.split(']', 1)
 
-            print(f"{rest_parts=}")
-
             var_key = rest_parts[0]
             rest = rest_parts[1]
 
-            print(f"{var_key=}")
-            print(f"{rest=}")
-
             variable = self.variables[var_key]
-            print(f"{variable=}")
 
             new_values = []
             for v in variable:
-                print(f"{v=}")
                 new_values.append(self.pre_process_value(start + v + rest))
 
             return new_values
@@ -266,5 +251,4 @@ def flatten(not_flat_list: list) -> list[str]:
 
 def almost_flatten(l: list) -> list[list[str]]:
     flat = sum(map(almost_flatten, l), []) if isinstance(l, list) else [l]
-    # print(f"{flat=}")
     return flat
