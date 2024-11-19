@@ -19,17 +19,17 @@ class LineType(IntEnum):
     OTHER = auto()
 
 
-class Compiler:
+class Preprocessor:
     def __init__(self, file):
-        self.compiled_properties = []
-        self.compiled_glsl = []
+        self.compiled_properties: list[str] = []
+        self.compiled_glsl: list[str] = []
 
-        self.variables = {}
+        self.variables: dict[str, list[str]] = {}
         self.current_glsl_key = "NONE"
         self.was_glsl_key_used = True
 
-        self.used_numbers = []
-        self.last_id = None
+        self.used_numbers: list[int] = []
+        self.last_id: None | str = None
 
         line_nr = 0
         while line := file.readline():
@@ -124,7 +124,7 @@ class Compiler:
         key = parts[0].strip()
         values = parts[1].strip().split(' ')
 
-        self.variables[key] = self.pre_process_values(values)
+        self.variables[key] = self.pre_process_values(values, debug=True)
 
     def process_property_declaration(self, line: str):
         line_content = line.strip()
@@ -138,10 +138,6 @@ class Compiler:
 
         key = parts[0].strip()
         values = parts[1].strip().split(' ')
-        print(f"{line=}")
-        print(f"{padding=}")
-        print(f"{key=}")
-        print(f"{values=}")
 
         id: str
         _, id = key.split('.', 2)
@@ -157,12 +153,8 @@ class Compiler:
             self.last_id = id
 
         preprocessed_values = self.pre_process_values(values)
-        print(f"{preprocessed_values=}")
-        print(f"{' '.join(preprocessed_values)=}")
 
         self.compiled_properties.append(padding + key + '=' + ' '.join(preprocessed_values))
-
-        print(f"{self.compiled_properties[-1]=}")
 
         if id.isdigit():
             self.used_numbers.append(int(id))
@@ -176,15 +168,20 @@ class Compiler:
 
         self.compiled_properties.append(padding + ' '.join(preprocessed_values))
 
-    def pre_process_values(self, values: list[str]):
-        processed_values = []
+    def pre_process_values(self, values: list[str], debug=False) -> list[str]:
+        processed_values: list[str] = []
 
         for value in values:
-            processed_values.append(self.pre_process_value(value))
+            processed_values.extend(flatten(self.pre_process_value(value, debug)))
+
+        # for i, value in enumerate(processed_values):
+        #     if type(value) == list:
+        #         print(f"vvv {value=}")
+        #         processed_values[i] = ''.join(value)
 
         return processed_values
 
-    def pre_process_value(self, value):
+    def pre_process_value(self, value: str, debug=False) -> list:
         if '[' in value:
             parts = value.split('[', 1)
 
@@ -201,16 +198,22 @@ class Compiler:
             var_key = rest_parts[0]
             rest = rest_parts[1]
 
+            print(f"{var_key=}")
+            print(f"{rest=}")
+
             variable = self.variables[var_key]
+            print(f"{variable=}")
 
             new_values = []
             for v in variable:
+                print(f"{v=}")
                 new_values.append(self.pre_process_value(start + v + rest))
 
             return new_values
 
         else:
-            return value
+            if debug: print(f"final {value=}")
+            return [value]
 
     line_processing_function: dict[LineType, Callable[[Self, str], str]] = {
         LineType.COMMENT: process_comment,
@@ -240,7 +243,7 @@ def compile_properties():
         preprocessed_glsl_text: str
 
         with open(file[0], "r") as f:
-            compiler = Compiler(f)
+            compiler = Preprocessor(f)
 
             preprocessed_properties_text = compiler.get_compiled_properties()
             preprocessed_glsl_text = compiler.get_compiled_glsl()
@@ -252,3 +255,16 @@ def compile_properties():
 
         with open(file[2], "w") as f:
             f.write(preprocessed_glsl_text)
+
+
+def flatten(not_flat_list: list) -> list[str]:
+    flat: list[str] = []
+    almost_flat = almost_flatten(not_flat_list)
+    for value in almost_flat:
+        flat.append(''.join(value))
+    return flat
+
+def almost_flatten(l: list) -> list[list[str]]:
+    flat = sum(map(almost_flatten, l), []) if isinstance(l, list) else [l]
+    # print(f"{flat=}")
+    return flat
