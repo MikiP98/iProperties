@@ -2,7 +2,7 @@
 import os
 
 from enum import auto, IntEnum
-from typing import Callable, Self
+from typing import Callable, Self, TextIO
 
 it = "\033[93m"
 blue = "\033[94m"
@@ -12,6 +12,7 @@ red = "\033[91m"
 
 class LineType(IntEnum):
     COMMENT = auto()
+    IPROPERTY_COMMENT = auto()
     GLSL_COMMENT = auto()
     VARIABLE = auto()
     PROPERTY_DECLARATION = auto()
@@ -20,9 +21,10 @@ class LineType(IntEnum):
 
 
 class Preprocessor:
-    def __init__(self, file):
+    def __init__(self, file: TextIO):
         self.compiled_properties: list[str] = []
         self.compiled_glsl: list[str] = []
+        self.potater: list[str] = []
 
         self.variables: dict[str, list[str]] = {}
         self.current_glsl_key = "NONE"
@@ -38,7 +40,7 @@ class Preprocessor:
             processing_method = self.line_processing_function[line_type]
             processing_method(self, line)
 
-    def get_compiled_properties(self):
+    def get_compiled_properties(self) -> str:
         property_id = 1
         last_id = None
         for i, value in enumerate(self.compiled_properties):
@@ -67,7 +69,7 @@ class Preprocessor:
 
         return '\n'.join(self.compiled_properties).strip()
 
-    def get_compiled_glsl(self):
+    def get_compiled_glsl(self) -> str:
         id = 1
         for i, value in enumerate(self.compiled_glsl):
             if '*' not in value:
@@ -86,12 +88,17 @@ class Preprocessor:
 
         return '\n'.join(self.compiled_glsl).strip()
 
+    def get_potater(self) -> str:
+        return '\n'.join(self.potater).strip()
+
     @staticmethod
     def determine_line_type(line: str) -> LineType:
         if len(line.strip()) >= 1:
             if line.strip()[0] == '#':
                 if line.strip()[1] == '=':
                     return LineType.GLSL_COMMENT
+                elif line.strip()[1] == '$':
+                    return LineType.IPROPERTY_COMMENT
                 else:
                     return LineType.COMMENT
             elif line.strip()[0] == '$':
@@ -104,19 +111,27 @@ class Preprocessor:
         else:
             return LineType.EMPTY_LINE
 
-    def process_empty_line(self, line: str):
+    def process_empty_line(self, line: str) -> None:
         self.compiled_properties.append(line.strip())
+        self.potater.append(line.strip())
 
-    def process_comment(self, line: str):
+    def process_comment(self, line: str) -> None:
         self.compiled_properties.append(line.rstrip())
+        self.potater.append(line.rstrip())
 
-    def process_glsl_comment(self, line: str):
+    def process_iproperty_comment(self, _: str) -> None:
+        # Ignore/delete
+        pass
+
+    def process_glsl_comment(self, line: str) -> None:
         if not self.was_glsl_key_used:
             print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was never used")
         self.current_glsl_key = line.strip()[2:].strip()
         self.was_glsl_key_used = False
 
-    def process_variable(self, line: str):
+        self.potater.append(line.rstrip())
+
+    def process_variable(self, line: str) -> None:
         line = line.strip()[1:]
 
         parts = line.split('=', 1)
@@ -126,7 +141,9 @@ class Preprocessor:
 
         self.variables[key] = self.pre_process_values(values, debug=True)
 
-    def process_property_declaration(self, line: str):
+        self.potater.append(f"groups.{key} = {' '.join(self.variables[key])}")
+
+    def process_property_declaration(self, line: str) -> None:
         line_content = line.strip()
         padding_length = len(line) - len(line_content)
         if padding_length == 0:
@@ -159,7 +176,9 @@ class Preprocessor:
         if id.isdigit():
             self.used_numbers.append(int(id))
 
-    def process_other(self, line: str):
+        self.potater.append(line.rstrip())
+
+    def process_other(self, line: str) -> None:
         line_content = line.strip()
         padding_length = len(line) - len(line_content)
         padding = line[:padding_length - 1]
@@ -167,6 +186,8 @@ class Preprocessor:
         preprocessed_values = self.pre_process_values(line_content.split(' '))
 
         self.compiled_properties.append(padding + ' '.join(preprocessed_values))
+
+        self.potater.append(line.rstrip())
 
     def pre_process_values(self, values: list[str], debug=False) -> list[str]:
         processed_values: list[str] = []
@@ -197,11 +218,13 @@ class Preprocessor:
             return new_values
 
         else:
-            if debug: print(f"final {value=}")
+            if debug:
+                print(f"final {value=}")
             return [value]
 
-    line_processing_function: dict[LineType, Callable[[Self, str], str]] = {
+    line_processing_function: dict[LineType, Callable[[Self, str], None]] = {
         LineType.COMMENT: process_comment,
+        LineType.IPROPERTY_COMMENT: process_iproperty_comment,
         LineType.GLSL_COMMENT: process_glsl_comment,
         LineType.VARIABLE: process_variable,
         LineType.PROPERTY_DECLARATION: process_property_declaration,
@@ -210,40 +233,50 @@ class Preprocessor:
     }
 
 
-def po_tater_preprocess():
-    ...
-
-
 def compile_properties():
     print(f"{it}{blue}Compiling properties files...")
-    files = [("block.properties.template", "block.properties", "blocks.glsl")]
+    files = [
+        (
+            ("block.iProperties.properties", "block.template.properties"),
+            ("block.properties", "blocks.glsl", "block.PoTater.properties")
+        )
+    ]
 
     for file in files:
         print()
 
-        # Check if file exists
-        if not os.path.exists(file[0]):
-            print(f"{red}File `{file[0]}` not found!")
-            continue
+        template_file_name = file[0][0]
 
-        print(f"{blue}Compiling: `{file[0]}`...")
+        # Check if file exists
+        if not os.path.exists(template_file_name):
+            template_file_name = file[0][1]
+            if not os.path.exists(template_file_name):
+                print(f"{red}File `{file[0]}` not found!")
+                continue
+
+        print(f"{blue}Compiling: `{template_file_name}`...")
 
         preprocessed_properties_text: str
         preprocessed_glsl_text: str
 
-        with open(file[0], "r") as f:
+        with open(template_file_name, "r") as f:
             compiler = Preprocessor(f)
 
             preprocessed_properties_text = compiler.get_compiled_properties()
             preprocessed_glsl_text = compiler.get_compiled_glsl()
 
+            potater_text = compiler.get_potater()
+
             print(compiler.variables)
 
-        with open(file[1], "w") as f:
+        with open(file[1][0], "w") as f:
             f.write(preprocessed_properties_text)
 
-        with open(file[2], "w") as f:
+        with open(file[1][1], "w") as f:
             f.write(preprocessed_glsl_text)
+
+        with open(file[1][2], "w") as f:
+            f.write(potater_text)
 
 
 def flatten(not_flat_list: list) -> list[str]:
@@ -252,6 +285,7 @@ def flatten(not_flat_list: list) -> list[str]:
     for value in almost_flat:
         flat.append(''.join(value))
     return flat
+
 
 def almost_flatten(l: list) -> list[list[str]]:
     flat = sum(map(almost_flatten, l), []) if isinstance(l, list) else [l]
