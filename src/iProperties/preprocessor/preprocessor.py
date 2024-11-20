@@ -210,6 +210,10 @@ class Preprocessor:
     }
 
 
+def po_tater_preprocess():
+    ...
+
+
 def compile_properties():
     print(f"{it}{blue}Compiling properties files...")
     files = [("block.properties.template", "block.properties", "blocks.glsl")]
