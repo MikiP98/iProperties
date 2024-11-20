@@ -22,6 +22,8 @@ class LineType(IntEnum):
 
 class Preprocessor:
     def __init__(self, file: TextIO):
+        self.file = file
+
         self.compiled_properties: list[str] = []
         self.compiled_glsl: list[str] = []
         self.potater: list[str] = []
@@ -61,11 +63,7 @@ class Preprocessor:
                 last_id = property_id
                 property_id += 1
 
-            if "minecraft:oak_sign" in value:
-                print(f"pre {value=}")
             self.compiled_properties[i] = value
-            if "minecraft:oak_sign" in value:
-                print(f"post {value=}")
 
         return '\n'.join(self.compiled_properties).strip()
 
@@ -139,7 +137,7 @@ class Preprocessor:
         key = parts[0].strip()
         values = parts[1].strip().split(' ')
 
-        self.variables[key] = self.pre_process_values(values, debug=True)
+        self.variables[key] = self.pre_process_values(values, variable=True)
 
         self.potater.append(f"groups.{key} = {' '.join(self.variables[key])}")
 
@@ -189,12 +187,28 @@ class Preprocessor:
 
         self.potater.append(line.rstrip())
 
-    def pre_process_values(self, values: list[str], debug=False) -> list[str]:
+    def pre_process_values(self, values: list[str], variable=False, debug=False) -> list[str]:
         processed_values: list[str] = []
 
-        for value in values:
-            processed_values.extend(flatten(self.pre_process_value(value, debug)))
+        for i, value in enumerate(values):
+            if not (value == '\\' and variable and i == len(values) - 1):
+                processed_values.extend(flatten(self.pre_process_value(value, debug)))
+            else:
+                while True:
+                    processed_values.append("\\n")
+                    next_line_values = self.file.readline().strip().split(' ')
+                    break_loop = True
+                    for next_line_value in next_line_values:
+                        break_loop = True
+                        if next_line_value == '\\':
+                            break_loop = False
+                            print("Setting break loop to false")
+                        else:
+                            processed_values.extend(flatten(self.pre_process_value(next_line_value, True)))
+                    if break_loop:
+                        break
 
+        # print(f"final {processed_values=}")
         return processed_values
 
     def pre_process_value(self, value: str, debug=False) -> list:
@@ -213,7 +227,12 @@ class Preprocessor:
 
             new_values = []
             for v in variable:
-                new_values.append(self.pre_process_value(start + v + rest))
+                if v == "\\n" or v == '\n' or v == '\\\n':
+                    new_values.append('\\\n')
+                elif v == '':
+                    print(f"{yellow}WARNING: Empty value")
+                else:
+                    new_values.append(self.pre_process_value(start + v + rest))
 
             return new_values
 
