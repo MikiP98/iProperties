@@ -33,6 +33,7 @@ class Preprocessor:
         self.was_glsl_key_used = True
 
         self.used_numbers: list[int] = []
+        self.directly_used_variables: list[str] = []  # if not in this list, don't copy to PoTater
         self.last_id: None | str = None
 
         line_nr = 0
@@ -78,6 +79,9 @@ class Preprocessor:
             while id in self.used_numbers:
                 id += 1
 
+            if '**' in value:
+                value = value.replace('**', str(id - 1))
+
             if '*' in value:
                 value = value.replace('*', str(id))
                 id += 1
@@ -87,7 +91,12 @@ class Preprocessor:
         return '\n'.join(self.compiled_glsl).strip()
 
     def get_potater(self) -> str:
-        return '\n'.join(self.potater).strip()
+        processed_potater = []
+
+        for line in self.potater:
+            processed_potater.append(line)
+
+        return '\n'.join(processed_potater).strip()
 
     @staticmethod
     def determine_line_type(line: str) -> LineType:
@@ -161,7 +170,11 @@ class Preprocessor:
             if self.was_glsl_key_used:
                 print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was already used")
 
-            for entry in self.current_glsl_key.split(','):
+            entries = self.current_glsl_key.split(',')
+            self.compiled_glsl.append("#define " + entries[0].strip() + ' ' + id)
+            for entry in entries[1:]:
+                if id == '*':
+                    id = "**"
                 self.compiled_glsl.append("#define " + entry.strip() + ' ' + id)
             self.was_glsl_key_used = True
 
@@ -192,7 +205,7 @@ class Preprocessor:
 
         for i, value in enumerate(values):
             if not (value == '\\' and variable and i == len(values) - 1):
-                processed_values.extend(flatten(self.pre_process_value(value, debug)))
+                processed_values.extend(flatten(self.pre_process_value(value, variable=variable, debug=debug)))
             else:
                 while True:
                     processed_values.append("\\n")
@@ -202,16 +215,15 @@ class Preprocessor:
                         break_loop = True
                         if next_line_value == '\\':
                             break_loop = False
-                            print("Setting break loop to false")
                         else:
-                            processed_values.extend(flatten(self.pre_process_value(next_line_value, True)))
+                            processed_values.extend(flatten(self.pre_process_value(next_line_value, variable=variable)))
                     if break_loop:
                         break
 
         # print(f"final {processed_values=}")
         return processed_values
 
-    def pre_process_value(self, value: str, debug=False) -> list:
+    def pre_process_value(self, value: str, variable=False, debug=False) -> list:
         if '[' in value:
             parts = value.split('[', 1)
 
@@ -222,6 +234,9 @@ class Preprocessor:
 
             var_key = rest_parts[0]
             rest = rest_parts[1]
+
+            if not variable:
+                self.directly_used_variables.append(var_key)
 
             variable = self.variables[var_key]
 
