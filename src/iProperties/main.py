@@ -8,14 +8,12 @@ def main_cli():
     main(flags_required=False)
 
 
-def main(flags_required=True):
+def main():
     print(f'Hello PyCharm! {__version__}')
     # Parse flags
-
-    # If flags are missing and `flags_required` is True, ask for input
 
     preprocessor.compile_properties()
 
 
 if __name__ == '__main__':
-    main(flags_required=True)
+    main()
