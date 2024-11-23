@@ -301,16 +301,19 @@ def compile_properties():
 
             potater_text = compiler.get_potater()
 
-            print(compiler.variables)
+            # print(compiler.variables)
 
         with open(file[1][0], "w") as f:
             f.write(preprocessed_properties_text)
+            print(f"{blue}`{file[1][0]}` saved")
 
         with open(file[1][1], "w") as f:
             f.write(preprocessed_glsl_text)
+            print(f"{blue}`{file[1][1]}` saved")
 
         with open(file[1][2], "w") as f:
             f.write(potater_text)
+            print(f"{blue}`{file[1][2]}` saved")
 
 
 def flatten(not_flat_list: list) -> list[str]:
