@@ -1,11 +1,11 @@
 # coding=utf-8
 import iProperties.preprocessor as preprocessor
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 
 
 def main_cli():
-    main(flags_required=False)
+    main()
 
 
 def main():
