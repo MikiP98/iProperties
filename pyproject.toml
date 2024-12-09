@@ -12,7 +12,7 @@ description = "Iris `.properties` compiler for extended functionality and automa
 #readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">= 3.12"
-keywords = ["iris", "optifine", "mc", "minecraft", "shader", "shaders", "properties", "compiler"]
+keywords = ["iris", "optifine", "mc", "minecraft", "shader", "shaders", "properties", "preprocessor", "compiler"]
 classifiers = [
     "Intended Audience :: Developers",
 ]

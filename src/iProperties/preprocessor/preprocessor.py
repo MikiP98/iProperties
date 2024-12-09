@@ -8,10 +8,12 @@ it = "\033[93m"
 blue = "\033[94m"
 yellow = "\033[93m"
 red = "\033[91m"
+reset = "\033[0m"
 
 
 class LineType(IntEnum):
     COMMENT = auto()
+    DEFINE_COMMENT = auto()
     IPROPERTY_COMMENT = auto()
     GLSL_COMMENT = auto()
     VARIABLE = auto()
@@ -106,6 +108,8 @@ class Preprocessor:
                     return LineType.GLSL_COMMENT
                 elif line.strip()[1] == '$':
                     return LineType.IPROPERTY_COMMENT
+                elif line.strip()[1:7].lower() == "define":
+                    return LineType.DEFINE_COMMENT
                 else:
                     return LineType.COMMENT
             elif line.strip()[0] == '$':
@@ -125,6 +129,21 @@ class Preprocessor:
     def process_comment(self, line: str) -> None:
         self.compiled_properties.append(line.rstrip())
         self.potater.append(line.rstrip())
+
+    def process_define_comment(self, line: str) -> None:
+        line_content = line.strip()
+        padding_length = len(line.rstrip()) - len(line_content)
+        if padding_length == 0:
+            padding = ""
+        else:
+            padding = line[:padding_length]
+
+        define, key, values = line_content.split(' ', 2)
+
+        entry = f"{padding}#define {key} {' '.join(self.pre_process_values(values.split(' ')))}"
+
+        self.compiled_properties.append(entry)
+        self.potater.append(entry)
 
     def process_iproperty_comment(self, _: str) -> None:
         # Ignore/delete
@@ -152,7 +171,7 @@ class Preprocessor:
 
     def process_property_declaration(self, line: str) -> None:
         line_content = line.strip()
-        padding_length = len(line) - len(line_content)
+        padding_length = len(line.rstrip()) - len(line_content)
         if padding_length == 0:
             padding = ""
         else:
@@ -258,6 +277,7 @@ class Preprocessor:
 
     line_processing_function: dict[LineType, Callable[[Self, str], None]] = {
         LineType.COMMENT: process_comment,
+        LineType.DEFINE_COMMENT: process_define_comment,
         LineType.IPROPERTY_COMMENT: process_iproperty_comment,
         LineType.GLSL_COMMENT: process_glsl_comment,
         LineType.VARIABLE: process_variable,
@@ -268,7 +288,7 @@ class Preprocessor:
 
 
 def compile_properties():
-    print(f"{it}{blue}Compiling properties files...")
+    print(f"{it}{blue}Preprocessing properties files...{reset}")
     files = [
         (
             ("block.iProperties.properties", "block.template.properties"),
@@ -288,7 +308,7 @@ def compile_properties():
                 print(f"{red}File `{file[0]}` not found!")
                 continue
 
-        print(f"{blue}Compiling: `{template_file_name}`...")
+        print(f"{blue}Preprocessing: `{template_file_name}`...{reset}")
 
         preprocessed_properties_text: str
         preprocessed_glsl_text: str

@@ -1,7 +1,7 @@
 # coding=utf-8
 import iProperties.preprocessor as preprocessor
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 
 def main_cli():
@@ -9,7 +9,7 @@ def main_cli():
 
 
 def main():
-    print(f'Hello PyCharm! {__version__}')
+    print(f'iProperties! {__version__}')
     # Parse flags
 
     preprocessor.compile_properties()
