@@ -167,7 +167,7 @@ class Preprocessor:
 
         self.variables[key] = self.pre_process_values(values, variable=True)
 
-        self.potater.append(f"groups.{key} = {' '.join(self.variables[key])}")
+        self.potater.append(f"group.{key} = {' '.join(self.variables[key])}")
 
     def process_property_declaration(self, line: str) -> None:
         line_content = line.strip()

@@ -1,7 +1,7 @@
 # coding=utf-8
 import iProperties.preprocessor as preprocessor
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 def main_cli():
