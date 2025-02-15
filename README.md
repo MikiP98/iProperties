@@ -6,7 +6,8 @@
 
 ### Iris Properties
 
-An alternative preprocessing app to [PoTater](https://github.com/Null-MC/PoTater)
+An alternative preprocessing app to [PoTater](https://github.com/Null-MC/PoTater)  
+Custom property template format used to reduce the work needed to create custom properties for your shader!
 
 <hr>
 
