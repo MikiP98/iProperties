@@ -6,7 +6,7 @@ from typing import cast
 import iProperties.preprocessor as preprocessor
 from iProperties.formatting import ArgsNamespace, bold, gray, green, it, red, reset
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 
 def main() -> None:

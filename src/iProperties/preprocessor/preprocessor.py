@@ -205,17 +205,17 @@ class Preprocessor:
 
         if (id != "**" and id != self.last_id) or not self.was_glsl_key_used:
             if self.was_glsl_key_used:
-                print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was already used{reset}")
+                print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}` was already used; Missing define{reset}")
+            else:
+                entries = self.current_glsl_key.split(',')
+                self.compiled_glsl.append("#define " + entries[0].strip() + ' ' + id)
+                for entry in entries[1:]:
+                    if id == '*':
+                        id = "**"
+                    self.compiled_glsl.append("#define " + entry.strip() + ' ' + id)
+                self.was_glsl_key_used = True
 
-            entries = self.current_glsl_key.split(',')
-            self.compiled_glsl.append("#define " + entries[0].strip() + ' ' + id)
-            for entry in entries[1:]:
-                if id == '*':
-                    id = "**"
-                self.compiled_glsl.append("#define " + entry.strip() + ' ' + id)
-            self.was_glsl_key_used = True
-
-            self.last_id = id
+                self.last_id = id
 
         preprocessed_values = self.pre_process_values(values)
 
