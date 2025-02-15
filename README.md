@@ -1,6 +1,6 @@
 ﻿# iProperties
 
-<br/>
+<hr>
 
 ## Description
 
@@ -8,7 +8,7 @@
 
 An alternative preprocessing app to [PoTater](https://github.com/Null-MC/PoTater)
 
-<br/>
+<hr>
 
 ## Features
 
@@ -37,7 +37,7 @@ Will generate
 #define BLOCK_WALL_MIN 64
 ```
 
-<br/>
+<hr>
 
 ### Auto numering
 
@@ -127,7 +127,7 @@ block.14=vine_entry
 ```
 
 
-<br/>
+<hr>
 
 ### Dynamic variable groups for automation
 
@@ -202,13 +202,13 @@ block.128=acacia_stairs:shape=straight:half=bottom:facing=north andesite_stairs:
  create:copper_shingle_stairs:shape=straight:half=bottom:facing=north create:copper_tile_stairs:shape=straight:half=bottom:facing=north
 ```
 
-<br/>
+<hr>
 
 ### Custom ignored comments
 
 You can create ignored comments using `#$`, such comment won't be transfered to the resulting processed files, the line will be skipped
 
-<br/>
+<hr>
 
 ## How to use
 
@@ -234,3 +234,14 @@ This file will then be processed into 3 files:
 - Run command `iProperties` or `Iris`
 
 `block.iProperties.properties` or `block.template.properties` will be processed to `block.properties`, `block.glsl` and `block.PoTater.properties`
+
+<hr>
+
+## For more info and examples look in [example folder](example)
+
+<hr>
+
+## License
+
+This project is licensed under the GNU Lesser General Public License v3.0.  
+See the [LICENSE](LICENSE) file for details.

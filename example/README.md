@@ -1,0 +1,1 @@
+## Free to use examples and scripts under the CC0 1.0 Universal Public Domain Dedication
