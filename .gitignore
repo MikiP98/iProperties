@@ -1,11 +1,25 @@
 ### My ignore list
 
 .idea/discord.xml
+
 block.template.properties
 block.iProperties.properties
 block.PoTater.properties
 block.properties
 blocks.glsl
+
+item.template.properties
+item.iProperties.properties
+item.PoTater.properties
+item.properties
+items.glsl
+
+entity.template.properties
+entity.iProperties.properties
+entity.PoTater.properties
+entity.properties
+entities.glsl
+
 win-x64.potater.exe
 potater_tests
 potater_tests/*

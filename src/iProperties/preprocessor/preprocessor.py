@@ -28,7 +28,9 @@ class Preprocessor:
 
         self.compiled_properties: list[str] = []
         self.compiled_glsl: list[str] = []
+
         self.potater: list[str] = []
+        self.potater_variable_line_splittings: dict[str, list[str]] = {}
 
         self.variables: dict[str, list[str]] = {}
         self.current_glsl_key = "NONE"
@@ -115,7 +117,8 @@ class Preprocessor:
             elif line.strip()[0] == '$':
                 return LineType.VARIABLE
             else:
-                if line.strip()[:6] in frozenset(("block.", "item.", "entity.")):
+                # if line.strip()[:6] in frozenset(("block.", "item.", "entity.")):
+                if any(x in line.strip()[:7] for x in ("block.", "item.", "entity.")):
                     return LineType.PROPERTY_DECLARATION
                 else:
                     return LineType.OTHER
@@ -140,7 +143,9 @@ class Preprocessor:
 
         define, key, values = line_content.split(' ', 2)
 
-        entry = f"{padding}#define {key} {' '.join(self.pre_process_values(values.split(' ')))}"
+        variable_values = self.pre_process_values(values.split(' '))
+        variable_values_string = ' '.join(variable_values)
+        entry = f"{padding}#define {key} {variable_values_string}"
 
         self.compiled_properties.append(entry)
         self.potater.append(entry)
@@ -167,7 +172,19 @@ class Preprocessor:
 
         self.variables[key] = self.pre_process_values(values, variable=True)
 
-        self.potater.append(f"group.{key} = {' '.join(self.variables[key])}")
+        if r"\n" not in self.variables[key]:
+            # print(f"'\\n' not found in '{key}': {self.variables[key]}")
+            self.potater.append(f"group.{key} = {' '.join(self.variables[key])}")
+        else:
+            # print(f"'\\n' found in '{key}': {self.variables[key]}")
+            lines = ' '.join(self.variables[key]).split(r" \n ")
+            self.potater_variable_line_splittings[key] = []
+            for i, line in enumerate(lines):
+                modId = line.split(':', 1)[0].strip()
+                self.potater_variable_line_splittings[key].append(modId)
+                entry = f"group.{key}_{modId} = {line}"
+                self.potater.append(entry)
+            # print(self.potater_variable_line_splittings)
 
     def process_property_declaration(self, line: str) -> None:
         line_content = line.strip()
@@ -206,7 +223,52 @@ class Preprocessor:
         if id.isdigit():
             self.used_numbers.append(int(id))
 
-        self.potater.append(line.rstrip())
+        # try:
+        if "[" not in line:
+            self.potater.append(line.rstrip())
+        else:
+            parts = line_content.split('=', 1)
+            if len(parts) == 2:
+                line_content = parts[1].strip()
+                result = parts[0] + '='
+            else:
+                result = ""
+            words = line_content.split(' ')
+            # new_words = []
+            # print(f"found '[' in: {words}")
+            for word in words:
+                result += ' ' + ' '.join(self.pre_process_values([word]))
+
+            self.potater.append(result)
+            #     if '[' in word:
+            #         key_properties = word.split(']')
+            #         prefix_key = key_properties[0].split('[', 1)
+            #         prefix = prefix_key[0]
+            #         key = prefix_key[1]
+            #         properties = key_properties[1].strip()
+            #
+            #         if properties[0] != ':':
+            #             new_words.append(' '.join(self.pre_process_values([word])))
+            #         else:
+            #             if key in self.potater_variable_line_splittings:
+            #                 # print(f"found '{key}' in 'self.potater_variable_line_splittings': {self.potater_variable_line_splittings[key]}")
+            #                 new_key_suffixes = self.potater_variable_line_splittings[key]
+            #                 for suffix in new_key_suffixes:
+            #                     new_words.append(f"{prefix}[{key}_{suffix}]{properties} \\\n")
+            #             else:
+            #                 # print(f"'{key}' NOT found in 'self.potater_variable_line_splittings': {self.potater_variable_line_splittings}")
+            #                 new_words.append(word)
+            #     else:
+            #         new_words.append(word)
+            #
+            # result += ' '.join(new_words).rstrip()
+            # if result[-1] == '\\':
+            #     result = result[:-2]
+            # self.potater.append(result)
+
+        # except Exception as e:
+        #     print(f"EXCEPTION: {e}")
+        #     self.potater.append(line.rstrip())
 
     def process_other(self, line: str) -> None:
         line_content = line.strip()
@@ -217,7 +279,13 @@ class Preprocessor:
 
         self.compiled_properties.append(padding + ' '.join(preprocessed_values))
 
-        self.potater.append(line.rstrip())
+        # self.potater.append(line.rstrip())
+        line = line.rstrip()
+        words = line.split(' ')
+        new_words = []
+        for word in words:
+            new_words.append(' '.join(self.pre_process_values([word])))
+        self.potater.append(' '.join(new_words))
 
     def pre_process_values(self, values: list[str], variable=False, debug=False) -> list[str]:
         processed_values: list[str] = []
@@ -293,6 +361,14 @@ def compile_properties():
         (
             ("block.iProperties.properties", "block.template.properties"),
             ("block.properties", "blocks.glsl", "block.PoTater.properties")
+        ),
+        (
+            ("item.iProperties.properties", "item.template.properties"),
+            ("item.properties", "items.glsl", "item.PoTater.properties")
+        ),
+        (
+            ("entity.iProperties.properties", "entity.template.properties"),
+            ("entity.properties", "entities.glsl", "entity.PoTater.properties")
         )
     ]
 
