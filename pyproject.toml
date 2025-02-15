@@ -29,5 +29,5 @@ Repository = "https://github.com/MikiP98/iProperties"
 Issues = "https://github.com/MikiP98/iProperties/issues"
 
 [project.scripts]
-iProperties = "iProperties.main:main_cli"
-iris = "iProperties.main:main_cli"
+iProperties = "iProperties.main:main"
+iris = "iProperties.main:main"

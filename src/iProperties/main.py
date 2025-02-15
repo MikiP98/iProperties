@@ -9,10 +9,6 @@ from iProperties.formatting import ArgsNamespace, bold, gray, green, it, red, re
 __version__ = '1.0.0'
 
 
-def main_cli() -> None:
-    main()
-
-
 def main() -> None:
     print(f"{bold}{green}iProperties! {__version__}{reset}")
 
