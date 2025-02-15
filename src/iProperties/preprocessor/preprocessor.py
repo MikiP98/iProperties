@@ -100,21 +100,26 @@ class Preprocessor:
 
     @staticmethod
     def determine_line_type(line: str) -> LineType:
-        if len(line.strip()) >= 1:
-            if line.strip()[0] == '#':
-                if line.strip()[1] == '=':
+        line = line.strip()
+        if len(line) >= 1:
+            if line[0] == '#':
+                if len(line) == 1:
+                    pass
+                elif line[1] == '=':
                     return LineType.GLSL_COMMENT
-                elif line.strip()[1] == '$':
+                elif line[1] == '$':
                     return LineType.IPROPERTY_COMMENT
-                elif line.strip()[1:7].lower() == "define":
-                    return LineType.DEFINE_COMMENT
-                else:
-                    return LineType.COMMENT
-            elif line.strip()[0] == '$':
+                elif len(line) >= 7:
+                    if line[1:7].lower() == "define":
+                        return LineType.DEFINE_COMMENT
+
+                return LineType.COMMENT
+
+            elif line[0] == '$':
                 return LineType.VARIABLE
             else:
                 # if line.strip()[:6] in frozenset(("block.", "item.", "entity.")):
-                if any(x in line.strip()[:7] for x in ("block.", "item.", "entity.")):
+                if any(x in line[:7] for x in ("block.", "item.", "entity.")):
                     return LineType.PROPERTY_DECLARATION
                 else:
                     return LineType.OTHER
@@ -372,7 +377,6 @@ def compile_properties(args: ArgsNamespace) -> None:
         ))
 
     if not (args.input == "./" or args.output == ""):
-        print(args.input)
         for i, file in enumerate(files):
             new_inputs = []
             for input in file[0]:
