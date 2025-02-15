@@ -23,6 +23,10 @@ entities.glsl
 output
 output/*
 
+example/output
+example/output/*
+!example/block.iProperties.properties
+
 win-x64.potater.exe
 potater_tests
 potater_tests/*
