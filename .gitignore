@@ -20,6 +20,9 @@ entity.PoTater.properties
 entity.properties
 entities.glsl
 
+output
+output/*
+
 win-x64.potater.exe
 potater_tests
 potater_tests/*

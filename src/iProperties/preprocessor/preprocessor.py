@@ -4,11 +4,7 @@ import os
 from enum import auto, IntEnum
 from typing import Callable, Self, TextIO
 
-it = "\033[93m"
-blue = "\033[94m"
-yellow = "\033[93m"
-red = "\033[91m"
-reset = "\033[0m"
+from iProperties.formatting import ArgsNamespace, blue, bold, it, red, reset, yellow
 
 
 class LineType(IntEnum):
@@ -156,7 +152,7 @@ class Preprocessor:
 
     def process_glsl_comment(self, line: str) -> None:
         if not self.was_glsl_key_used:
-            print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was never used")
+            print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was never used{reset}")
         self.current_glsl_key = line.strip()[2:].strip()
         self.was_glsl_key_used = False
 
@@ -204,7 +200,7 @@ class Preprocessor:
 
         if (id != "**" and id != self.last_id) or not self.was_glsl_key_used:
             if self.was_glsl_key_used:
-                print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was already used")
+                print(f"{yellow}WARNING: GLSL key: `{self.current_glsl_key}`, was already used{reset}")
 
             entries = self.current_glsl_key.split(',')
             self.compiled_glsl.append("#define " + entries[0].strip() + ' ' + id)
@@ -332,7 +328,7 @@ class Preprocessor:
                 if v == "\\n" or v == '\n' or v == '\\\n':
                     new_values.append('\\\n')
                 elif v == '':
-                    print(f"{yellow}WARNING: Empty value")
+                    print(f"{yellow}WARNING: Empty value{reset}")
                 else:
                     new_values.append(self.pre_process_value(start + v + rest))
 
@@ -355,22 +351,33 @@ class Preprocessor:
     }
 
 
-def compile_properties():
-    print(f"{it}{blue}Preprocessing properties files...{reset}")
-    files = [
-        (
+def compile_properties(args: ArgsNamespace) -> None:
+    print(f"{bold}{it}{blue}Preprocessing properties files...{reset}")
+    files: list[tuple[tuple[str, str], tuple[str, str, str]]] = []
+
+    if args.block:
+        files.append((
             ("block.iProperties.properties", "block.template.properties"),
             ("block.properties", "blocks.glsl", "block.PoTater.properties")
-        ),
-        (
+        ))
+    if args.item:
+        files.append((
             ("item.iProperties.properties", "item.template.properties"),
             ("item.properties", "items.glsl", "item.PoTater.properties")
-        ),
-        (
+        ))
+    if args.entity:
+        files.append((
             ("entity.iProperties.properties", "entity.template.properties"),
             ("entity.properties", "entities.glsl", "entity.PoTater.properties")
-        )
-    ]
+        ))
+
+    if not (args.input == "./" or args.output == ""):
+        print(args.input)
+        for i, file in enumerate(files):
+            new_inputs = []
+            for input in file[0]:
+                new_inputs.append(f"{args.input}{input}")
+            files[i] = (tuple(new_inputs), file[1])
 
     for file in files:
         print()
@@ -381,10 +388,10 @@ def compile_properties():
         if not os.path.exists(template_file_name):
             template_file_name = file[0][1]
             if not os.path.exists(template_file_name):
-                print(f"{red}File `{file[0]}` not found!")
+                print(f"{red}File `{file[0]}` not found!{reset}")
                 continue
 
-        print(f"{blue}Preprocessing: `{template_file_name}`...{reset}")
+        print(f"{bold}{blue}Preprocessing: `{template_file_name}`...{reset}")
 
         preprocessed_properties_text: str
         preprocessed_glsl_text: str
@@ -399,17 +406,23 @@ def compile_properties():
 
             # print(compiler.variables)
 
-        with open(file[1][0], "w") as f:
-            f.write(preprocessed_properties_text)
-            print(f"{blue}`{file[1][0]}` saved")
+        # .properties
+        if args.properties:
+            with open(f"{args.output}{file[1][0]}", "w") as f:
+                f.write(preprocessed_properties_text)
+                print(f"{blue}`{file[1][0]}` saved{reset}")
 
-        with open(file[1][1], "w") as f:
-            f.write(preprocessed_glsl_text)
-            print(f"{blue}`{file[1][1]}` saved")
+        # .glsl
+        if args.glsl:
+            with open(f"{args.output}{file[1][1]}", "w") as f:
+                f.write(preprocessed_glsl_text)
+                print(f"{blue}`{file[1][1]}` saved{reset}")
 
-        with open(file[1][2], "w") as f:
-            f.write(potater_text)
-            print(f"{blue}`{file[1][2]}` saved")
+        # .potater
+        if args.potater:
+            with open(f"{args.output}{file[1][2]}", "w") as f:
+                f.write(potater_text)
+                print(f"{blue}`{file[1][2]}` saved{reset}")
 
 
 def flatten(not_flat_list: list) -> list[str]:

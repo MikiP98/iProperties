@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 dynamic = ["version"]
 name = "iProperties"
 authors = [
-    {name = "Mikołaj Pokora", email = "pokora.mikolaj+github@gmail.com"}
+    { name = "Mikołaj Pokora", email = "pokora.mikolaj+github@gmail.com" }
 ]
 description = "Iris `.properties` compiler for extended functionality and automation"
 #readme = "README.md"
@@ -15,6 +15,11 @@ requires-python = ">= 3.12"
 keywords = ["iris", "optifine", "mc", "minecraft", "shader", "shaders", "properties", "preprocessor", "compiler"]
 classifiers = [
     "Intended Audience :: Developers",
+]
+dependencies = [
+    "argparse",
+    "os",
+    "typing"
 ]
 
 [tool.hatch.version]
