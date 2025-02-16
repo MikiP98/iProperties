@@ -308,3 +308,10 @@ Here are the available flags:
 
 This project is licensed under the GNU Lesser General Public License v3.0.  
 See the [LICENSE](LICENSE) file for details.
+
+### There is an exception for the "example" folder
+
+All files in the "example" directory are licensed under the CC0 1.0 Universal Public Domain Dedication.  
+This means they are free to use without restriction, including for proprietary and closed-source projects.  
+No attribution is required.  
+See the [example/LICENSE](example/LICENSE) file for details.
