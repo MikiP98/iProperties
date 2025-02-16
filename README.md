@@ -199,7 +199,7 @@ block.128=[stairs]:shape=straight:half=bottom:facing=north
 Will generate
 ```properties
 block.128=acacia_stairs:shape=straight:half=bottom:facing=north andesite_stairs:shape=straight:half=bottom:facing=north \
- reatedeco:andesite_sheet_stairs:shape=straight:half=bottom:facing=north createdeco:brass_sheet_stairs:shape=straight:half=bottom:facing=north \
+ createdeco:andesite_sheet_stairs:shape=straight:half=bottom:facing=north createdeco:brass_sheet_stairs:shape=straight:half=bottom:facing=north \
  create:copper_shingle_stairs:shape=straight:half=bottom:facing=north create:copper_tile_stairs:shape=straight:half=bottom:facing=north
 ```
 
