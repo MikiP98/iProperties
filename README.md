@@ -269,20 +269,20 @@ This will run the preprocessor with the default config
 You can pass additional flags to the command to change the behavior of the preprocessor  
 Here are the available flags:
 
-| Flag                                     | Description                                                                            |
-|------------------------------------------|----------------------------------------------------------------------------------------|
-| `--help` or `-h`                         | shows a help message on the console                                                    |
-| `--potater`/`-po`, `--no-potater`        | Whether to save the **PoTaTer** conversion (default: false)                            |
-| `--glsl`/`-g`, `--no-glsl`               | Whether to save the **GLSL defines** file (default: true)                              |
-| `--properties`/`-pr`, `--no-properties`  | Whether to save the preprocessed `.properties` file (default: true)                    |
-| `--block`/`-b`, `--no-block`             | Whether to process the **block** properties template (default: true)                   |
-| `--item`/`-it`, `--no-item`              | Whether to process the **item** properties template (default: true)                    |
-| `--entity`/`-e`, `--no-entity`           | Whether to process the **entity** properties template (default: true)                  |
-| `--output OUTPUT`, `-o {OUTPUT}`         | Output directory (location of output files) (default: './')                            |
-| `--input INPUT`, `-in {INPUT}`           | Input directory (location of input template files) (default: './')                     |
-| `--print-args`/`-pa`, `--no-print-args`  | Print the parsed arguments in the console at the start of the program (default: false) |
-| `--skip-processing-output-print`, `-spo` | When present skips printing which files will be outputted                              |
-| `--skip-processing-type-print`, `-spt`   | When present skips printing the processing type                                        |
+| Flag                                     | Description                                                           |
+|------------------------------------------|-----------------------------------------------------------------------|
+| `--help` or `-h`                         | shows a help message on the console                                   |
+| `--potater`/`-po`, `--no-potater`        | Whether to save the **PoTaTer** conversion (default: false)           |
+| `--glsl`/`-g`, `--no-glsl`               | Whether to save the **GLSL defines** file (default: true)             |
+| `--properties`/`-pr`, `--no-properties`  | Whether to save the preprocessed `.properties` file (default: true)   |
+| `--block`/`-b`, `--no-block`             | Whether to process the **block** properties template (default: true)  |
+| `--item`/`-it`, `--no-item`              | Whether to process the **item** properties template (default: true)   |
+| `--entity`/`-e`, `--no-entity`           | Whether to process the **entity** properties template (default: true) |
+| `--output OUTPUT`, `-o {OUTPUT}`         | Output directory (location of output files) (default: './')           |
+| `--input INPUT`, `-in {INPUT}`           | Input directory (location of input template files) (default: './')    |
+| `--print-args`/`-pa`, `--no-print-args`  | Whether to print the parsed arguments in the console (default: false) |
+| `--skip-processing-output-print`, `-spo` | When present skips printing which files will be outputted             |
+| `--skip-processing-type-print`, `-spt`   | When present skips printing the processing type                       |
 
 [//]: # (- `--help` or `-h`                         ->  shows a help message on the console)
 [//]: # (- `--potater`/`-po`, `--no-potater`        ->  Whether to save the **PoTaTer** conversion &#40;default: false&#41;)
@@ -293,7 +293,7 @@ Here are the available flags:
 [//]: # (- `--entity`/`-e`, `--no-entity`           ->  Whether to process the **entity** properties template &#40;default: true&#41;)
 [//]: # (- `--output OUTPUT`, `-o {OUTPUT}`         ->  Output directory &#40;location of output files&#41; &#40;default: './'&#41;)
 [//]: # (- `--input INPUT`, `-in {INPUT}`           ->  Input directory &#40;location of input template files&#41; &#40;default: './'&#41;)
-[//]: # (- `--print-args`/`-pa`, `--no-print-args`  ->  Print the parsed arguments in the console at the start of the program &#40;default: false&#41;)
+[//]: # (- `--print-args`/`-pa`, `--no-print-args`  ->  Whether to print the parsed arguments in the console &#40;default: false&#41;)
 [//]: # (- `--skip-processing-output-print`, `-spo` ->  When present skips printing the output directory)
 [//]: # (- `--skip-processing-type-print`, `-spt`   ->  When present skips printing the processing type)
 
