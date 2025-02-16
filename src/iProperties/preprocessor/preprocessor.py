@@ -376,7 +376,7 @@ def compile_properties(args: ArgsNamespace) -> None:
             ("entity.properties", "entities.glsl", "entity.PoTater.properties")
         ))
 
-    if not (args.input == "./" or args.output == ""):
+    if not (args.input == "./" or args.input == ""):
         for i, file in enumerate(files):
             new_inputs = []
             for input in file[0]:
@@ -410,21 +410,37 @@ def compile_properties(args: ArgsNamespace) -> None:
 
             # print(compiler.variables)
 
+        path: str
         # .properties
         if args.properties:
-            with open(f"{args.output}{file[1][0]}", "w") as f:
+            if args.properties_output is None:
+                path = f"{args.output}{file[1][0]}"
+            else:
+                path = f"{args.properties_output}{file[1][0]}"
+
+            with open(path, "w") as f:
                 f.write(preprocessed_properties_text)
                 print(f"{blue}`{file[1][0]}` saved{reset}")
 
         # .glsl
         if args.glsl:
-            with open(f"{args.output}{file[1][1]}", "w") as f:
+            if args.glsl_output is None:
+                path = f"{args.output}{file[1][1]}"
+            else:
+                path = f"{args.glsl_output}{file[1][1]}"
+
+            with open(path, "w") as f:
                 f.write(preprocessed_glsl_text)
                 print(f"{blue}`{file[1][1]}` saved{reset}")
 
         # .potater
         if args.potater:
-            with open(f"{args.output}{file[1][2]}", "w") as f:
+            if args.potater_output is None:
+                path = f"{args.output}{file[1][2]}"
+            else:
+                path = f"{args.potater_output}{file[1][2]}"
+
+            with open(path, "w") as f:
                 f.write(potater_text)
                 print(f"{blue}`{file[1][2]}` saved{reset}")
 
