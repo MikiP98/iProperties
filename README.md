@@ -265,9 +265,9 @@ This file will can later be processed into 3 files:
 - Open the console in the target directory or use the `cd` command to go there
 - Run command `iProperties` or `Iris`
 
-This will run the preprocessor with the default config
-You can pass additional flags to the command to change the behavor of the preprocessor  
-Here are the available falgs:
+This will run the preprocessor with the default config  
+You can pass additional flags to the command to change the behavior of the preprocessor  
+Here are the available flags:
 
 | Flag                                     | Description                                                                            |
 |------------------------------------------|----------------------------------------------------------------------------------------|
