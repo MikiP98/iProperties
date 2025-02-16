@@ -281,7 +281,7 @@ Here are the available falgs:
 | `--output OUTPUT`, `-o {OUTPUT}`         | Output directory (location of output files) (default: './')                            |
 | `--input INPUT`, `-in {INPUT}`           | Input directory (location of input template files) (default: './')                     |
 | `--print-args`/`-pa`, `--no-print-args`  | Print the parsed arguments in the console at the start of the program (default: false) |
-| `--skip-processing-output-print`, `-spo` | When present skips printing the output directory                                       |
+| `--skip-processing-output-print`, `-spo` | When present skips printing which files will be outputted                              |
 | `--skip-processing-type-print`, `-spt`   | When present skips printing the processing type                                        |
 
 [//]: # (- `--help` or `-h`                         ->  shows a help message on the console)

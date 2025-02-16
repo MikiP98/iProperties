@@ -46,7 +46,7 @@ def parse_arguments() -> ArgsNamespace:
 
     # DEBUG
     # --print-args (T/F) -> print the parsed arguments
-    # --skip-processing-output-print -> skip printing the output directory
+    # --skip-processing-output-print -> skip printing which files will be outputted
     # --skip-processing-type-print -> skip printing the processing type
 
     parser = argparse.ArgumentParser(
@@ -79,7 +79,7 @@ def parse_arguments() -> ArgsNamespace:
     parser.add_argument("--print-args", "-pa", action=argparse.BooleanOptionalAction, default=False,
                         help="Print the parsed arguments (default: false)")
     parser.add_argument("--skip-processing-output-print", "-spo", action="store_true", default=False,
-                        help="Skip printing the output directory")
+                        help="Skip printing which files will be outputted")
     parser.add_argument("--skip-processing-type-print", "-spt", action="store_true", default=False,
                         help="Skip printing the processing type")
 
