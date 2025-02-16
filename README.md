@@ -126,7 +126,37 @@ block.13=minecraft:tall_grass:half=upper
 #= BLOCK_VINE
 block.14=vine_entry
 ```
+Or
+```properties
+block.8=minecraft:water minecraft:flowing_water
+block.11=bamboo bamboo_sapling
+block.*=minecraft:tall_grass:half=lower
+block.*=minecraft:tall_grass:half=upper
 
+#= BLOCK_VINE
+block.*= \
+#ifdef BOES_EARTH_BLOCKSTATES
+  vine:is_on_leaves=false \
+#else
+  vine \
+#endif
+null
+```
+```properties
+block.8=minecraft:water minecraft:flowing_water
+block.11=bamboo bamboo_sapling
+block.12=minecraft:tall_grass:half=lower
+block.13=minecraft:tall_grass:half=upper
+
+#= BLOCK_VINE
+block.14= \
+#ifdef BOES_EARTH_BLOCKSTATES
+  vine:is_on_leaves=false \
+#else
+  vine \
+#endif
+null
+```
 
 <hr>
 
