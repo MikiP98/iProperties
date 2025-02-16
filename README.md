@@ -248,13 +248,14 @@ You can create ignored comments using `#$`, such comment won't be transfered to 
 - Make sure you have [Python](https://www.python.org/downloads/) installed  
   *The app was tested using Python 3.12*
 - Open console and run `pip install git+https://github.com/MikiP98/iProperties.git`
+There is also a runnable install script included in the example folder
 
 ### Create template files for processing
 
 IProperties will try to find a file named `block.iProperties.properties` to process  
 If such a file won't be found it will try to find file named `block.template.properties`
 
-This file will then be processed into 3 files:
+This file will can later be processed into 3 files:
 - `block.properties` - ready to use by Iris or Optifine properties file
 - `block.glsl` - ready to use by Iris or Optifine glsl mapping file
 - `block.PoTater.properties` - template in PoTater format if you would need it
@@ -263,8 +264,23 @@ This file will then be processed into 3 files:
 
 - Open the console in the target directory or use the `cd` command to go there
 - Run command `iProperties` or `Iris`
+This will run the preprocessor with the default config
+You can pass additional flags to the command to change the behavor of the preprocessor  
+Here are the available falgs:
+- `--help` or `-h`                         ->  shows a help message on the console
+- `--potater`/`-po`, `--no-potater`        ->  Whether to save the **PoTaTer** conversion (default: false)
+- `--glsl`/`-g`, `--no-glsl`               ->  Whether to save the **GLSL defines** file (default: true)
+- `--properties`/`-pr`, `--no-properties`  ->  Whether to save the preprocessed `.properties` file (default: true)
+- `--block`/`-b`, `--no-block`             ->  Whether to process the **block** properties template (default: true)
+- `--item`/`-it`, `--no-item`              ->  Whether to process the **item** properties template (default: true)
+- `--entity`/`-e`, `--no-entity`           ->  Whether to process the **entity** properties template (default: true)
+- `--output OUTPUT`, `-o {OUTPUT}`         ->  Output directory (location of output files) (default: './')
+- `--input INPUT`, `-in {INPUT}`           ->  Input directory (location of input template files) (default: './')
+- `--print-args`/`-pa`, `--no-print-args`  ->  Print the parsed arguments in the console at the start of the program (default: false)
+- `--skip-processing-output-print`, `-spo` ->  When present skips printing the output directory
+- `--skip-processing-type-print`, `-spt`   ->  When present skips printing the processing type
 
-`block.iProperties.properties` or `block.template.properties` will be processed to `block.properties`, `block.glsl` and `block.PoTater.properties`
+`block.iProperties.properties` or `block.template.properties` can then be processed to `block.properties`, `block.glsl` and/or `block.PoTater.properties`
 
 <hr>
 
