@@ -47,22 +47,26 @@ class Preprocessor:
         property_id = 1
         last_id = None
         for i, value in enumerate(self.compiled_properties):
-            if "block." in value or "item." in value or "entity." in value:
-                key = value.split('=', 1)[0]
-                str_property_id = key.split('.', 1)[1]
-                if str_property_id.isdigit():
-                    last_id = int(str_property_id)
-                    property_id = last_id + 1
+            # Check if the line isn't a comment
+            if len(value) >= 1:
+                if value[0] != '#':
 
-            while property_id in self.used_numbers:
-                property_id += 1
+                    if "block." in value or "item." in value or "entity." in value:
+                        key = value.split('=', 1)[0]
+                        str_property_id = key.split('.', 1)[1]
+                        if str_property_id.isdigit():
+                            last_id = int(str_property_id)
+                            property_id = last_id + 1
 
-            if '**' in value:
-                value = value.replace('**', str(last_id))
-            if '*' in value:
-                value = value.replace('*', str(property_id))
-                last_id = property_id
-                property_id += 1
+                    while property_id in self.used_numbers:
+                        property_id += 1
+
+                    if '**' in value:
+                        value = value.replace('**', str(last_id))
+                    if '*' in value:
+                        value = value.replace('*', str(property_id))
+                        last_id = property_id
+                        property_id += 1
 
             self.compiled_properties[i] = value
 
@@ -101,6 +105,10 @@ class Preprocessor:
     @staticmethod
     def determine_line_type(line: str) -> LineType:
         line = line.strip()
+        debug = False
+        if line == "# item.* = light":
+            print(f"Found line of interest: {line}")
+            debug = True
         if len(line) >= 1:
             if line[0] == '#':
                 if len(line) == 1:
@@ -113,6 +121,8 @@ class Preprocessor:
                     if line[1:7].lower() == "define":
                         return LineType.DEFINE_COMMENT
 
+                if debug:
+                    print(f"Found comment: {line}")
                 return LineType.COMMENT
 
             elif line[0] == '$':
