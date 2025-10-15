@@ -27,7 +27,7 @@ def main() -> None:
     if not (args.skip_processing_output_print or args.skip_processing_type_print):
         print()
 
-    preprocessor.compile_properties(args)
+    preprocessor.run(args)
 
 
 def parse_arguments() -> ArgsNamespace:

@@ -43,7 +43,7 @@ class Preprocessor:
             processing_method = self.line_processing_function[line_type]
             processing_method(self, line)
 
-    def get_compiled_properties(self) -> str:
+    def get_preprocessed_properties(self) -> str:
         property_id = 1
         last_id = None
         for i, value in enumerate(self.compiled_properties):
@@ -72,7 +72,7 @@ class Preprocessor:
 
         return '\n'.join(self.compiled_properties).strip()
 
-    def get_compiled_glsl(self) -> str:
+    def get_preprocessed_glsl(self) -> str:
         id = 1
         for i, value in enumerate(self.compiled_glsl):
             if '*' not in value:
@@ -366,7 +366,7 @@ class Preprocessor:
     }
 
 
-def compile_properties(args: ArgsNamespace) -> None:
+def run(args: ArgsNamespace) -> None:
     print(f"{bold}{it}{blue}Preprocessing properties files...{reset}")
     files: list[tuple[tuple[str, str], tuple[str, str, str]]] = []
 
@@ -411,14 +411,12 @@ def compile_properties(args: ArgsNamespace) -> None:
         preprocessed_glsl_text: str
 
         with open(template_file_name, "r") as f:
-            compiler = Preprocessor(f)
+            preprocessor = Preprocessor(f)
 
-            preprocessed_properties_text = compiler.get_compiled_properties()
-            preprocessed_glsl_text = compiler.get_compiled_glsl()
+            preprocessed_properties_text = preprocessor.get_preprocessed_properties()
+            preprocessed_glsl_text = preprocessor.get_preprocessed_glsl()
 
-            potater_text = compiler.get_potater()
-
-            # print(compiler.variables)
+            potater_text = preprocessor.get_potater()
 
         path: str
         # .properties
