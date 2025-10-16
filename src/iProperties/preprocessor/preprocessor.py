@@ -22,7 +22,7 @@ class Preprocessor:
     def __init__(self, file: TextIO):
         self.file = file
 
-        self.compiled_properties: list[str] = []
+        self.preprocessed_properties: list[str] = []
         self.compiled_glsl: list[str] = []
 
         self.potater: list[str] = []
@@ -46,7 +46,7 @@ class Preprocessor:
     def get_preprocessed_properties(self) -> str:
         property_id = 1
         last_id = None
-        for i, value in enumerate(self.compiled_properties):
+        for i, value in enumerate(self.preprocessed_properties):
             # Check if the line isn't a comment
             if len(value) >= 1:
                 if value[0] != '#':
@@ -68,9 +68,9 @@ class Preprocessor:
                         last_id = property_id
                         property_id += 1
 
-            self.compiled_properties[i] = value
+            self.preprocessed_properties[i] = value
 
-        return '\n'.join(self.compiled_properties).strip()
+        return '\n'.join(self.preprocessed_properties).strip()
 
     def get_preprocessed_glsl(self) -> str:
         id = 1
@@ -137,11 +137,11 @@ class Preprocessor:
             return LineType.EMPTY_LINE
 
     def process_empty_line(self, line: str) -> None:
-        self.compiled_properties.append(line.strip())
+        self.preprocessed_properties.append(line.strip())
         self.potater.append(line.strip())
 
     def process_comment(self, line: str) -> None:
-        self.compiled_properties.append(line.rstrip())
+        self.preprocessed_properties.append(line.rstrip())
         self.potater.append(line.rstrip())
 
     def process_define_comment(self, line: str) -> None:
@@ -158,7 +158,7 @@ class Preprocessor:
         variable_values_string = ' '.join(variable_values)
         entry = f"{padding}#define {key} {variable_values_string}"
 
-        self.compiled_properties.append(entry)
+        self.preprocessed_properties.append(entry)
         self.potater.append(entry)
 
     def process_iproperty_comment(self, _: str) -> None:
@@ -229,7 +229,7 @@ class Preprocessor:
 
         preprocessed_values = self.pre_process_values(values)
 
-        self.compiled_properties.append(padding + key + '=' + ' '.join(preprocessed_values))
+        self.preprocessed_properties.append(padding + key + '=' + ' '.join(preprocessed_values))
 
         if id.isdigit():
             self.used_numbers.append(int(id))
@@ -288,7 +288,7 @@ class Preprocessor:
 
         preprocessed_values = self.pre_process_values(line_content.split(' '))
 
-        self.compiled_properties.append(padding + ' '.join(preprocessed_values))
+        self.preprocessed_properties.append(padding + ' '.join(preprocessed_values))
 
         # self.potater.append(line.rstrip())
         line = line.rstrip()
