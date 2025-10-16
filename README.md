@@ -321,3 +321,13 @@ All files in the "example" directory are licensed under the CC0 1.0 Universal Pu
 This means they are free to use without restriction, including for proprietary and closed-source projects.  
 No attribution is required.  
 See the [example/LICENSE](example/LICENSE) file for details.
+
+<hr>
+
+## Roadmap
+
+- Rewrite the whole thing:
+  - 2 passes, first variable pass, second processing pass
+  - Don't put any intermediate results in memory, write final version directly to file
+  - Consider switching to Poetry for easier dependency management
+  - Add support for more complex variable operations (e.g. exclusion of some entries from a variable)
